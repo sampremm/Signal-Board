@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-// Use Vite environment variable if available, otherwise fallback to the remote backend or local '/api'
-const API_BASE_URL = import.meta.env?.VITE_API_URL || 'https://signal-board-eb7y.vercel.app/api';
+// Retrieve base URL and normalize it to ensure it always ends with /api
+let rawApiUrl = import.meta.env?.VITE_API_URL || 'https://signal-board-eb7y.vercel.app/api';
+// Strip trailing slashes and ensure exactly one '/api' at the end
+rawApiUrl = rawApiUrl.replace(/\/+$/, '');
+const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
