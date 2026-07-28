@@ -1,0 +1,33 @@
+{
+  "name": "signal-board-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Antifragile distributed serverless backend for Signal Board in pure JavaScript",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "build": "prisma generate",
+    "start": "node src/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push"
+  },
+  "dependencies": {
+    "@google/genai": "latest",
+    "@prisma/client": "^5.14.0",
+    "@upstash/ratelimit": "^1.1.3",
+    "@upstash/redis": "^1.31.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^8.3.0",
+    "ioredis": "^5.11.1",
+    "jsonwebtoken": "^9.0.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prisma": "^5.14.0"
+  }
+}

@@ -1,0 +1,89 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  EMPLOYER
+  CANDIDATE
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  REVIEWING
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hashed bcrypt password
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 1-to-1 relationships for Entity Separation
+  employer  Employer?
+  candidate Candidate?
+}
+
+model Employer {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  companyName String
+  websiteUrl  String?
+  description String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs        Job[]
+}
+
+model Candidate {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  firstName   String
+  lastName    String
+  resumeText  String?  // Raw text or summary from resume for AI matching
+  skills      String[] // Array of candidate skills
+  createdAt   DateTime @default(now())
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+model Job {
+  id           String   @id @default(uuid())
+  employerId   String
+  title        String
+  description  String   // AI generated or custom formatted text
+  location     String
+  isRemote     Boolean  @default(false)
+  salaryRange  String?
+  skills       String[] // Targeted skills required
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  employer     Employer      @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+model Application {
+  id          String            @id @default(uuid())
+  jobId       String
+  candidateId String
+  status      ApplicationStatus @default(SUBMITTED)
+  coverLetter String?
+  appliedAt   DateTime          @default(now())
+
+  job         Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, candidateId])
+}
