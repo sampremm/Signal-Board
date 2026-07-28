@@ -107,8 +107,8 @@ export const apiService = {
   },
 
   // Job Posting CRUD & Application Service
-  async getJobs() {
-    const dataResponse = await apiClient.get('/jobs');
+  async getJobs(signal) {
+    const dataResponse = await apiClient.get('/jobs', { signal });
     return dataResponse.jobs || [];
   },
 

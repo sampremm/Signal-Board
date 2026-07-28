@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Search, Sparkles, MapPin, Briefcase, DollarSign, Building2, RefreshCw } from 'lucide-react';
 import { apiService } from '../../services/api.js';
 
@@ -26,20 +26,22 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
       : jobs;
   }, [jobs, isEmployer, user]);
 
-  console.log('[SmartSearch Render] Rendering SmartJobSearch with displayedJobs count:', displayedJobs.length);
-
-  const fetchInitialJobs = useCallback(async () => {
+  // fetchInitialJobs: stable identity (no deps), accepts optional AbortSignal
+  const fetchInitialJobs = useCallback(async (signal) => {
     setLoading(true);
     try {
-      const allJobs = await apiService.getJobs();
+      const allJobs = await apiService.getJobs(signal);
       console.log('[SmartSearch Init] Loaded initial jobs count:', allJobs.length);
       setJobs(allJobs);
-    } catch {
-      // Offline fallback managed in service layer
+    } catch (err) {
+      // Ignore AbortErrors — they are expected on cleanup
+      if (err?.code !== 'ERR_CANCELED' && err?.name !== 'AbortError') {
+        console.warn('[SmartSearch Init] Jobs fetch failed:', err?.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // stable — no deps that change
 
   const handleSmartSearch = useCallback(async (overrideQuery) => {
     // Ensure searchText is strictly a string (not an Event object from onClick/onSubmit)
@@ -69,14 +71,29 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
     }
   }, [query, fetchInitialJobs]);
 
+  // Stable ref so useEffect can call the latest handleSmartSearch
+  // without adding it as a dependency (which would cause re-runs on typing)
+  const handleSmartSearchRef = useRef(handleSmartSearch);
   useEffect(() => {
+    handleSmartSearchRef.current = handleSmartSearch;
+  }, [handleSmartSearch]);
+
+  // Fires ONLY when headerQuery changes (or on initial mount).
+  // Does NOT re-run when handleSmartSearch identity changes due to typing.
+  useEffect(() => {
+    const controller = new AbortController();
+
     if (headerQuery && typeof headerQuery === 'string' && headerQuery.trim()) {
       setQuery(headerQuery);
-      handleSmartSearch(headerQuery);
+      handleSmartSearchRef.current(headerQuery);
     } else {
-      fetchInitialJobs();
+      fetchInitialJobs(controller.signal);
     }
-  }, [headerQuery, fetchInitialJobs, handleSmartSearch]);
+
+    // Cleanup: cancel the in-flight GET /api/jobs if the component unmounts
+    // or headerQuery changes before the request completes (handles StrictMode too)
+    return () => controller.abort();
+  }, [headerQuery, fetchInitialJobs]); // stable deps — no more spurious re-runs
 
   const executeExample = useCallback((ex) => {
     setQuery(ex);
