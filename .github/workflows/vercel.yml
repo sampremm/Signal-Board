@@ -32,6 +32,7 @@ jobs:
         run: npx prisma validate
         env:
           DATABASE_URL: "postgresql://mock:mock@localhost:5432/mock"
+          DIRECT_URL: "postgresql://mock:mock@localhost:5432/mock"
 
       - name: Generate Prisma client
         run: npm run build
@@ -84,6 +85,7 @@ jobs:
           npx prisma generate
         env:
           DATABASE_URL: "postgresql://mock:mock@localhost:5432/mock"
+          DIRECT_URL: "postgresql://mock:mock@localhost:5432/mock"
           
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
