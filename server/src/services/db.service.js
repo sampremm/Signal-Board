@@ -6,22 +6,35 @@ import { logger } from '../utils/logger.util.js';
  * PrismaClient is configured with connection retry logic to handle
  * the "Error { kind: Closed }" wake-up error transparently.
  */
-function createPrismaClient() {
-  const options = { log: [] };
-  
-  if (process.env.DATABASE_URL) {
-    options.datasources = {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    };
-  }
+let prismaInstance = null;
 
-  return new PrismaClient(options);
+function getPrisma() {
+  if (!prismaInstance) {
+    try {
+      const options = { log: [] };
+      if (process.env.DATABASE_URL) {
+        options.datasources = {
+          db: {
+            url: process.env.DATABASE_URL,
+          },
+        };
+      }
+      prismaInstance = new PrismaClient(options);
+    } catch (error) {
+      logger.error('Database', `Prisma Initialization Failed: ${error.message}`);
+      throw error;
+    }
+  }
+  return prismaInstance;
 }
 
-// Singleton pattern: prevent multiple Prisma instances in nodemon hot-reload
-export const db = global.prisma || createPrismaClient();
+// Proxy pattern: Initialize Prisma lazily only when a query is executed.
+// This prevents top-level crashes during Vercel cold starts.
+export const db = new Proxy({}, {
+  get(target, prop) {
+    return getPrisma()[prop];
+  }
+});
 
 if (process.env.NODE_ENV !== 'production') {
   global.prisma = db;

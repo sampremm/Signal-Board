@@ -12,16 +12,29 @@ import { logger } from './utils/logger.util.js';
 
 dotenv.config();
 
+// Global Error Handlers for Vercel Diagnostics
+process.on('uncaughtException', (err) => {
+  console.error("FATAL UNCAUGHT EXCEPTION:", err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error("FATAL UNHANDLED REJECTION at:", promise, "reason:", reason);
+});
+
 // Startup Logging for Vercel Diagnostics
+console.log("Starting Signal Board...");
+console.log("Loading environment...");
 console.log("DATABASE_URL:", !!process.env.DATABASE_URL);
 console.log("DIRECT_URL:", !!process.env.DIRECT_URL);
+console.log("Initializing Prisma...");
+console.log("Initializing Redis...");
+console.log("Initializing AI services...");
 
-// Startup Validation
+// Startup Validation (Warn instead of crash)
 if (!process.env.DATABASE_URL) {
-  throw new Error("STARTUP ERROR: Missing required environment variable DATABASE_URL");
+  console.error("STARTUP ERROR: Missing required environment variable DATABASE_URL");
 }
 if (!process.env.JWT_SECRET) {
-  throw new Error("STARTUP ERROR: Missing required environment variable JWT_SECRET");
+  console.error("STARTUP ERROR: Missing required environment variable JWT_SECRET");
 }
 
 const app = express();
@@ -54,6 +67,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // API Routes & Entity Endpoints
+console.log("Registering routes...");
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/search', searchRoutes);
@@ -71,4 +85,5 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   });
 }
 
+console.log("Server ready.");
 export default app;
