@@ -7,14 +7,17 @@ import { logger } from '../utils/logger.util.js';
  * the "Error { kind: Closed }" wake-up error transparently.
  */
 function createPrismaClient() {
-  return new PrismaClient({
-    log: [],
-    datasources: {
+  const options = { log: [] };
+  
+  if (process.env.DATABASE_URL) {
+    options.datasources = {
       db: {
         url: process.env.DATABASE_URL,
       },
-    },
-  });
+    };
+  }
+
+  return new PrismaClient(options);
 }
 
 // Singleton pattern: prevent multiple Prisma instances in nodemon hot-reload

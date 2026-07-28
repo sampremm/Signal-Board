@@ -12,6 +12,18 @@ import { logger } from './utils/logger.util.js';
 
 dotenv.config();
 
+// Startup Logging for Vercel Diagnostics
+console.log("DATABASE_URL:", !!process.env.DATABASE_URL);
+console.log("DIRECT_URL:", !!process.env.DIRECT_URL);
+
+// Startup Validation
+if (!process.env.DATABASE_URL) {
+  throw new Error("STARTUP ERROR: Missing required environment variable DATABASE_URL");
+}
+if (!process.env.JWT_SECRET) {
+  throw new Error("STARTUP ERROR: Missing required environment variable JWT_SECRET");
+}
+
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -33,7 +45,8 @@ app.use(express.urlencoded({ extended: true }));
 // Root System Health Verification Route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
-    status: 'OK',
+    success: true,
+    status: 'healthy',
     runtime: 'Node.js + Express',
     architecture: 'Vercel Serverless (client) + Node API (server)',
     timestamp: new Date().toISOString(),
