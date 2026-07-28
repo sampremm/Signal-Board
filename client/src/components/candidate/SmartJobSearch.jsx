@@ -2,6 +2,27 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Search, Sparkles, MapPin, Briefcase, DollarSign, Building2, RefreshCw } from 'lucide-react';
 import { apiService } from '../../services/api.js';
 
+const JobSkeleton = () => (
+  <div className="saas-card p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+    <div className="flex items-start gap-4 flex-1 w-full">
+      <div className="w-12 h-12 rounded-lg skeleton-box shrink-0" />
+      <div className="space-y-3 w-full max-w-md">
+        <div className="h-5 w-3/4 skeleton-box" />
+        <div className="flex gap-4">
+          <div className="h-4 w-24 skeleton-box" />
+          <div className="h-4 w-24 skeleton-box" />
+        </div>
+        <div className="flex gap-2 pt-1">
+          <div className="h-6 w-16 skeleton-box" />
+          <div className="h-6 w-16 skeleton-box" />
+          <div className="h-6 w-20 skeleton-box" />
+        </div>
+      </div>
+    </div>
+    <div className="w-28 h-10 skeleton-box rounded-lg shrink-0 mt-3 sm:mt-0" />
+  </div>
+);
+
 export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
   const [query, setQuery] = useState('');
   const [jobs, setJobs] = useState([]);
@@ -26,30 +47,23 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
       : jobs;
   }, [jobs, isEmployer, user]);
 
-  // fetchInitialJobs: stable identity (no deps), accepts optional AbortSignal
   const fetchInitialJobs = useCallback(async (signal) => {
     setLoading(true);
     try {
       const allJobs = await apiService.getJobs(signal);
-      console.log('[SmartSearch Init] Loaded initial jobs count:', allJobs.length);
       setJobs(allJobs);
     } catch (err) {
-      // Ignore AbortErrors — they are expected on cleanup
       if (err?.code !== 'ERR_CANCELED' && err?.name !== 'AbortError') {
         console.warn('[SmartSearch Init] Jobs fetch failed:', err?.message);
       }
     } finally {
       setLoading(false);
     }
-  }, []); // stable — no deps that change
+  }, []);
 
   const handleSmartSearch = useCallback(async (overrideQuery) => {
-    // Ensure searchText is strictly a string (not an Event object from onClick/onSubmit)
     const searchText = typeof overrideQuery === 'string' ? overrideQuery : query;
-    console.log('[SmartSearch UI] Smart Search executed for query string:', searchText);
-
     if (!searchText || typeof searchText !== 'string' || !searchText.trim()) {
-      console.log('[SmartSearch UI] Empty query string provided — reloading default jobs feed.');
       setExtractedParams(null);
       await fetchInitialJobs();
       return;
@@ -57,9 +71,7 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
 
     setSearching(true);
     try {
-      console.log('[SmartSearch UI] Invoking apiService.smartAiSearch with:', searchText);
       const res = await apiService.smartAiSearch(searchText);
-      console.log('[SmartSearch State] Setting jobs state from API response count:', (res.jobs || []).length);
       setJobs(res.jobs || []);
       setExtractedParams(res.extractedParameters || null);
       setFromDatabase(res.fromDatabase || false);
@@ -71,29 +83,21 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
     }
   }, [query, fetchInitialJobs]);
 
-  // Stable ref so useEffect can call the latest handleSmartSearch
-  // without adding it as a dependency (which would cause re-runs on typing)
   const handleSmartSearchRef = useRef(handleSmartSearch);
   useEffect(() => {
     handleSmartSearchRef.current = handleSmartSearch;
   }, [handleSmartSearch]);
 
-  // Fires ONLY when headerQuery changes (or on initial mount).
-  // Does NOT re-run when handleSmartSearch identity changes due to typing.
   useEffect(() => {
     const controller = new AbortController();
-
     if (headerQuery && typeof headerQuery === 'string' && headerQuery.trim()) {
       setQuery(headerQuery);
       handleSmartSearchRef.current(headerQuery);
     } else {
       fetchInitialJobs(controller.signal);
     }
-
-    // Cleanup: cancel the in-flight GET /api/jobs if the component unmounts
-    // or headerQuery changes before the request completes (handles StrictMode too)
     return () => controller.abort();
-  }, [headerQuery, fetchInitialJobs]); // stable deps — no more spurious re-runs
+  }, [headerQuery, fetchInitialJobs]);
 
   const executeExample = useCallback((ex) => {
     setQuery(ex);
@@ -107,72 +111,72 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
   }, [fetchInitialJobs]);
 
   return (
-    <div className="max-w-[1128px] mx-auto px-4 py-6">
-      
-      {/* 3-Column LinkedIn Grid Architecture */}
+    <div className="max-w-[1128px] mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         
-        {/* LEFT COLUMN: Candidate Profile / Identity Card (col-span-3) */}
-        <div className="md:col-span-3 space-y-4 md:sticky md:top-[72px]">
-          <div className="linkedin-card overflow-hidden text-center pb-4">
-            {/* LinkedIn Background Header Banner */}
-            <div className="h-14 bg-gradient-to-r from-[#0A66C2] via-[#004182] to-[#057642]" />
-            <div className="w-16 h-16 rounded-full bg-white border-2 border-white text-[#0A66C2] font-bold text-2xl mx-auto -mt-8 shadow flex items-center justify-center">
-              {user ? (user.firstName?.[0] || user.companyName?.[0] || user.email[0]).toUpperCase() : 'C'}
+        {/* LEFT COLUMN: Candidate Profile / Identity Card */}
+        <div className="md:col-span-3 space-y-4 md:sticky md:top-[88px]">
+          <div className="saas-card overflow-hidden text-center pb-4">
+            <div className="h-16 bg-gradient-to-r from-blue-600 to-indigo-600" />
+            <div className="w-16 h-16 rounded-full bg-white border-4 border-white text-blue-600 font-bold text-2xl mx-auto -mt-8 shadow-sm flex items-center justify-center">
+              {user ? (user.firstName?.[0] || user.companyName?.[0] || user.email[0]).toUpperCase() : 'G'}
             </div>
 
             <div className="px-4 mt-2">
-              <h3 className="font-bold text-[#191919] text-base">
-                {user ? (user.companyName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email.split('@')[0]) : 'Guest Candidate'}
+              <h3 className="font-bold text-gray-900 text-base">
+                {user ? (user.companyName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email.split('@')[0]) : 'Guest User'}
               </h3>
-              <p className="text-xs text-[#666666] mt-0.5">
+              <p className="text-xs text-gray-500 mt-0.5 font-medium">
                 {user ? `${user.role} Profile` : 'Searching active tech roles'}
               </p>
             </div>
 
-            <hr className="my-3 border-[#DBDBDB]" />
+            <hr className="my-4 border-gray-200 mx-4" />
 
-            <div className="px-4 text-left space-y-2 text-xs">
-              <div className="flex justify-between text-[#666666]">
+            <div className="px-4 text-left space-y-2.5 text-xs font-medium">
+              <div className="flex justify-between text-gray-500">
                 <span>Active Session Role</span>
-                <span className="font-bold text-[#0A66C2]">{user ? user.role : 'CANDIDATE'}</span>
+                <span className="font-bold text-blue-600">{user ? user.role : 'CANDIDATE'}</span>
               </div>
-              <div className="flex justify-between text-[#666666]">
+              <div className="flex justify-between text-gray-500">
                 <span>AI Job Board</span>
-                <span className="font-semibold text-[#057642]">Neon Postgres</span>
+                <span className="font-semibold text-emerald-600">Neon Postgres</span>
               </div>
             </div>
 
-            <hr className="my-3 border-[#DBDBDB]" />
+            <hr className="my-4 border-gray-200 mx-4" />
 
             <div className="px-4 text-left">
-              <p className="text-[11px] font-bold text-[#191919] uppercase mb-1">Matched Skills</p>
-              <div className="flex flex-wrap gap-1 mt-1">
-                <span className="bg-[#EDF3F8] text-[#0A66C2] text-[10px] font-semibold px-2 py-0.5 rounded">Node.js</span>
-                <span className="bg-[#EDF3F8] text-[#0A66C2] text-[10px] font-semibold px-2 py-0.5 rounded">React</span>
-                <span className="bg-[#EDF3F8] text-[#0A66C2] text-[10px] font-semibold px-2 py-0.5 rounded">PostgreSQL</span>
-                <span className="bg-[#EDF3F8] text-[#0A66C2] text-[10px] font-semibold px-2 py-0.5 rounded">Prisma</span>
+              <p className="text-[11px] font-bold text-gray-900 uppercase tracking-wider mb-2">Matched Skills</p>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md">Node.js</span>
+                <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md">React</span>
+                <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md">PostgreSQL</span>
+                <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md">Prisma</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* CENTER COLUMN: AI Smart Search Box & Jobs Feed */}
-        <div className="md:col-span-9 space-y-4">
+        <div className="md:col-span-9 space-y-6">
           
-          {/* Hide AI Search Card for Employers */}
+          {/* AI Search Card */}
           {!isEmployer && (
-            <div className="linkedin-card p-5 border-l-4 border-l-[#0A66C2]">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-[#0A66C2] text-xs font-bold uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-[#057642]" />
+            <div className="saas-card p-6 border-l-4 border-l-blue-600 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                 <Sparkles className="w-24 h-24 text-blue-600" />
+              </div>
+              <div className="flex items-center justify-between mb-3 relative z-10">
+                <div className="flex items-center gap-2 text-blue-600 text-xs font-bold uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-blue-600" />
                   <span>
-                    {searchEngine === 'grok_live' ? 'AI Search Powered by Groq' :
-                     searchEngine === 'gemini_live' ? 'AI Search Powered by Gemini' :
-                     'AI-Assisted Natural Language Search'}
+                    {searchEngine === 'grok_live' ? 'AI Search (Groq)' :
+                     searchEngine === 'gemini_live' ? 'AI Search (Gemini)' :
+                     'AI Natural Language Search'}
                   </span>
                 </div>
-                <span className="text-[11px] text-[#666666]">
+                <span className="text-[11px] text-gray-400 font-medium bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
                   {searchEngine === 'grok_live' ? '⚡ Parsed By: Groq' :
                    searchEngine === 'gemini_live' ? '🤖 Parsed By: Gemini' :
                    searchEngine === 'cached_ai' ? '⚡ Cached AI' :
@@ -180,68 +184,63 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
                 </span>
               </div>
 
-              <h2 className="text-lg font-bold text-[#191919] mb-2">
+              <h2 className="text-xl font-bold text-gray-900 mb-2 relative z-10">
                 Find your ideal technical role naturally
               </h2>
-              <p className="text-xs text-[#666666] mb-4 leading-relaxed">
+              <p className="text-sm text-gray-500 mb-5 leading-relaxed max-w-2xl relative z-10">
                 Skip cumbersome filters. Enter a conversational phrase and AI will automatically extract criteria to filter active tech roles.
               </p>
 
               <form 
-                onSubmit={(e) => { 
-                  e.preventDefault(); 
-                  handleSmartSearch(query); 
-                }} 
-                className="flex gap-2 items-center"
+                onSubmit={(e) => { e.preventDefault(); handleSmartSearch(query); }} 
+                className="flex flex-col sm:flex-row gap-3 items-start sm:items-center relative z-10"
               >
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#666666]" />
+                <div className="relative flex-1 w-full">
+                  <Search className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="e.g., remote senior javascript roles..."
-                    className="input-field !pl-9 !py-2 !text-sm w-full"
+                    className="input-field !pl-10 w-full shadow-sm"
                   />
                 </div>
-                <button
-                  type="submit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSmartSearch(query);
-                  }}
-                  disabled={searching}
-                  className="btn-primary !px-5 !py-2 text-sm shrink-0 shadow-sm cursor-pointer"
-                >
-                  {searching ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 text-white animate-spin" />
-                      <span>Parsing...</span>
-                    </>
-                  ) : (
-                    <span>Smart Search</span>
-                  )}
-                </button>
-                {query && (
+                <div className="flex gap-2 w-full sm:w-auto">
                   <button
-                    type="button"
-                    onClick={clearSearch}
-                    className="btn-secondary !px-3 !py-2 text-xs cursor-pointer"
+                    type="submit"
+                    disabled={searching}
+                    className="btn-primary w-full sm:w-auto shrink-0 shadow-sm"
                   >
-                    Clear
+                    {searching ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Parsing...</span>
+                      </>
+                    ) : (
+                      <span>Smart Search</span>
+                    )}
                   </button>
-                )}
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      className="btn-secondary w-full sm:w-auto shrink-0"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
               </form>
 
               {/* Conversational Query Chips */}
-              <div className="mt-3.5 pt-3 border-t border-[#EDF3F8] flex flex-wrap gap-1.5 items-center">
-                <span className="text-[11px] text-[#666666] font-medium mr-1">Try:</span>
+              <div className="mt-5 pt-4 border-t border-gray-100 flex flex-wrap gap-2 items-center relative z-10">
+                <span className="text-xs text-gray-400 font-semibold mr-1 uppercase tracking-wider">Try:</span>
                 {exampleQueries.map((ex, i) => (
                   <button
                     key={i}
                     type="button"
                     onClick={() => executeExample(ex)}
-                    className="bg-[#EDF3F8] hover:bg-[#D7E8F7] text-[#0A66C2] px-2.5 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
+                    className="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
                   >
                     "{ex}"
                   </button>
@@ -252,30 +251,30 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
 
           {/* AI Extracted Criteria Visualizer */}
           {extractedParams && !isEmployer && (
-            <div className="linkedin-card p-4 border-l-4 border-l-[#057642] bg-[#F4F9F6]">
-              <div className="text-xs font-bold text-[#057642] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+            <div className="saas-card p-5 border-l-4 border-l-emerald-500 bg-emerald-50/30">
+              <div className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4" />
                 <span>Extracted Search Parameters ({extractedParams.parsedBy || 'AI'})</span>
               </div>
-              <div className="flex flex-wrap gap-2 text-xs">
+              <div className="flex flex-wrap gap-2.5 text-xs">
                 {extractedParams.title && (
-                  <span className="bg-white border border-[#DBDBDB] px-2.5 py-1 rounded font-medium text-[#191919]">
-                    <span className="text-[#666666]">Title Contains: </span>"{extractedParams.title}"
+                  <span className="bg-white border border-gray-200 px-3 py-1.5 rounded-lg font-medium text-gray-900 shadow-sm">
+                    <span className="text-gray-500 mr-1">Title Contains:</span>"{extractedParams.title}"
                   </span>
                 )}
                 {extractedParams.location && (
-                  <span className="bg-white border border-[#DBDBDB] px-2.5 py-1 rounded font-medium text-[#191919]">
-                    <span className="text-[#666666]">Location: </span>{extractedParams.location}
+                  <span className="bg-white border border-gray-200 px-3 py-1.5 rounded-lg font-medium text-gray-900 shadow-sm">
+                    <span className="text-gray-500 mr-1">Location:</span>{extractedParams.location}
                   </span>
                 )}
                 {typeof extractedParams.isRemote === 'boolean' && (
-                  <span className="bg-white border border-[#DBDBDB] px-2.5 py-1 rounded font-medium text-[#057642]">
-                    <span className="text-[#666666]">Workplace: </span>{extractedParams.isRemote ? 'Remote Only' : 'Onsite / Hybrid'}
+                  <span className="bg-white border border-gray-200 px-3 py-1.5 rounded-lg font-medium text-emerald-600 shadow-sm">
+                    <span className="text-gray-500 mr-1">Workplace:</span>{extractedParams.isRemote ? 'Remote Only' : 'Onsite / Hybrid'}
                   </span>
                 )}
                 {extractedParams.skills && extractedParams.skills.length > 0 && (
-                  <span className="bg-white border border-[#DBDBDB] px-2.5 py-1 rounded font-medium text-[#0A66C2]">
-                    <span className="text-[#666666]">Skills: </span>{extractedParams.skills.join(', ')}
+                  <span className="bg-white border border-gray-200 px-3 py-1.5 rounded-lg font-medium text-blue-600 shadow-sm">
+                    <span className="text-gray-500 mr-1">Skills:</span>{extractedParams.skills.join(', ')}
                   </span>
                 )}
               </div>
@@ -283,16 +282,15 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
           )}
 
           {/* Feed Header */}
-          <div className="flex items-center justify-between px-1 pt-2">
-            <div className="text-sm font-bold text-[#191919]">
-              {isEmployer ? 'Your Posted Positions' : 'Recommended Technical Positions'} <span className="text-[#666666] font-normal">({displayedJobs.length})</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-1 gap-2">
+            <div className="text-lg font-bold text-gray-900">
+              {isEmployer ? 'Your Posted Positions' : 'Recommended Technical Positions'} 
+              <span className="text-gray-400 font-medium ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{displayedJobs.length}</span>
             </div>
-            <div className="text-xs text-[#666666]">
-              Source: <span className="font-semibold text-[#0A66C2]">
-                {fromDatabase ? 'Neon Postgres DB' : 'Local Cache'}
-              </span>
+            <div className="text-xs text-gray-500 font-medium flex items-center gap-2">
+              <span>Source: <span className="font-bold text-gray-900">{fromDatabase ? 'Neon Postgres DB' : 'Local Cache'}</span></span>
               {!isEmployer && searchEngine && (
-                <span className="ml-2 text-[10px] bg-[#EDF3F8] text-[#0A66C2] font-bold px-1.5 py-0.5 rounded">
+                <span className="bg-blue-50 text-blue-700 border border-blue-100 font-bold px-2 py-0.5 rounded-md">
                   {searchEngine === 'grok_live' ? '⚡ Groq AI' :
                    searchEngine === 'gemini_live' ? '🤖 Gemini AI' :
                    searchEngine === 'cached_ai' ? '⚡ Cached' : '🔍 Heuristic'}
@@ -302,77 +300,80 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
           </div>
 
           {/* Job Cards List */}
-          {loading ? (
-            <div className="linkedin-card py-16 flex flex-col items-center justify-center text-center space-y-3">
-              <RefreshCw className="w-8 h-8 text-[#0A66C2] animate-spin" />
-              <p className="text-sm text-[#666666] font-medium">Loading opportunities...</p>
-            </div>
-          ) : displayedJobs.length === 0 ? (
-            <div className="linkedin-card p-10 text-center text-[#666666] space-y-3">
-              <Search className="w-10 h-10 mx-auto text-[#0A66C2]" />
-              <h3 className="text-base font-bold text-[#191919]">
-                {isEmployer ? 'No positions posted yet' : 'No roles found matching filters'}
-              </h3>
-              <p className="text-xs max-w-sm mx-auto">
-                {isEmployer 
-                  ? 'Use Employer AI Studio to draft and publish your first job opening.' 
-                  : 'Try clearing your conversational search prompt or selecting a broader technical domain.'}
-              </p>
-              {!isEmployer && (
-                <button onClick={clearSearch} className="btn-secondary !text-xs !py-1.5 mt-2">
-                  Show All Opportunities
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {displayedJobs.map((job) => (
+          <div className="space-y-4">
+            {loading ? (
+              <>
+                <JobSkeleton />
+                <JobSkeleton />
+                <JobSkeleton />
+              </>
+            ) : displayedJobs.length === 0 ? (
+              <div className="saas-card p-12 text-center text-gray-500 space-y-4 flex flex-col items-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-2">
+                  <Search className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">
+                  {isEmployer ? 'No positions posted yet' : 'No roles found matching filters'}
+                </h3>
+                <p className="text-sm max-w-sm mx-auto leading-relaxed">
+                  {isEmployer 
+                    ? 'Use Employer AI Studio to draft and publish your first job opening.' 
+                    : 'Try clearing your conversational search prompt or selecting a broader technical domain.'}
+                </p>
+                {!isEmployer && (
+                  <button onClick={clearSearch} className="btn-secondary mt-4">
+                    Show All Opportunities
+                  </button>
+                )}
+              </div>
+            ) : (
+              displayedJobs.map((job) => (
                 <div
                   key={job.id}
                   onClick={() => onSelectJob(job)}
-                  className="linkedin-card p-5 hover:bg-[#F9FAFB] transition-all cursor-pointer flex flex-col sm:flex-row justify-between sm:items-center gap-4 group"
+                  className="saas-card p-5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col sm:flex-row justify-between sm:items-center gap-5 group"
                 >
-                  <div className="flex items-start gap-3.5 flex-1">
+                  <div className="flex items-start gap-4 flex-1">
                     {/* Company Logo Badge */}
-                    <div className="w-12 h-12 rounded bg-[#EDF3F8] border border-[#B3D3EA] flex items-center justify-center font-bold text-lg text-[#0A66C2] shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-xl text-blue-600 shrink-0 shadow-sm">
                       {(job.companyName || 'C').charAt(0)}
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-bold text-[#0A66C2] text-base group-hover:underline leading-tight">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h4 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors leading-tight">
                           {job.title}
                         </h4>
                         {job.isRemote && (
-                          <span className="bg-[#E7F3ED] text-[#057642] border border-[#B2DFCB] text-[10px] font-extrabold px-[#666666] py-0.5 rounded-sm uppercase">
+                          <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
                             Remote
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#666666]">
-                        <span className="flex items-center gap-1 font-semibold text-[#191919]">
-                          <Building2 className="w-3.5 h-3.5 text-[#666666]" />
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500 font-medium">
+                        <span className="flex items-center gap-1.5">
+                          <Building2 className="w-4 h-4 text-gray-400" />
                           {job.companyName}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-[#666666]" />
+                        <span className="flex items-center gap-1.5">
+                          <MapPin className="w-4 h-4 text-gray-400" />
                           {job.location}
                         </span>
                         {job.salaryRange && (
-                          <span className="flex items-center gap-1 text-[#057642] font-semibold">
-                            <DollarSign className="w-3.5 h-3.5" />
+                          <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+                            <DollarSign className="w-4 h-4" />
                             {job.salaryRange}
                           </span>
                         )}
                       </div>
 
                       {/* Technical Skills Pill Tags */}
-                      <div className="flex flex-wrap gap-1.5 pt-1.5">
+                      <div className="flex flex-wrap gap-2 pt-2">
                         {(job.skills || []).map((skill, idx) => (
                           <span
                             key={idx}
-                            className="bg-[#F3F2EF] text-[#666666] border border-[#E0DFDC] text-[11px] px-2 py-0.5 rounded font-medium"
+                            className="bg-gray-50 text-gray-600 border border-gray-200 text-xs px-2.5 py-1 rounded-md font-medium"
                           >
                             {skill}
                           </span>
@@ -381,7 +382,7 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
                     </div>
                   </div>
 
-                  {/* Apply Action Button — Hidden for Employers */}
+                  {/* Apply Action Button */}
                   {!isEmployer && (
                     <button
                       onClick={(e) => {
@@ -392,20 +393,18 @@ export function SmartJobSearch({ user, headerQuery, onSelectJob, onOpenAuth }) {
                           onSelectJob(job);
                         }
                       }}
-                      className="btn-primary text-xs !py-1.5 !px-4 self-start sm:self-center shrink-0"
+                      className="btn-primary self-start sm:self-center shrink-0 w-full sm:w-auto"
                     >
                       {user ? 'Apply Now' : 'Sign in to Apply'}
                     </button>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
 
         </div>
-
       </div>
-
     </div>
   );
 }

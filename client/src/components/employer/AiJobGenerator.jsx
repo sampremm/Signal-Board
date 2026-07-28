@@ -98,30 +98,33 @@ We are actively recruiting an exceptional professional to architect scalable sys
   };
 
   return (
-    <div className="max-w-[1128px] mx-auto px-4 py-6">
+    <div className="max-w-[1128px] mx-auto px-4 py-8">
       
-      {/* LinkedIn Style Employer Studio Banner */}
-      <div className="linkedin-card p-6 mb-6 bg-gradient-to-r from-[#F3F6F8] to-[#E8F3FA] border-l-4 border-l-[#0A66C2]">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Employer Studio Banner */}
+      <div className="saas-card p-6 md:p-8 mb-8 bg-gradient-to-r from-gray-50 to-blue-50/50 border-l-4 border-l-blue-600 relative overflow-hidden">
+        <div className="absolute -right-10 -top-10 opacity-5 pointer-events-none">
+          <Sparkles className="w-48 h-48 text-blue-600" />
+        </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-[#0A66C2] text-xs font-extrabold uppercase tracking-wider mb-1">
-              <Sparkles className="w-4 h-4 text-[#057642]" />
-              <span>Feature 1: Employer AI Studio</span>
+            <div className="flex items-center gap-2 text-blue-600 text-xs font-extrabold uppercase tracking-wider mb-2">
+              <Sparkles className="w-4 h-4 text-emerald-600" />
+              <span>Employer AI Studio</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#191919]">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
               AI-Assisted Technical Recruiter Workbench
             </h1>
-            <p className="text-xs sm:text-sm text-[#666666] max-w-2xl mt-1 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-500 max-w-2xl mt-2 leading-relaxed">
               Transform rough hiring notes into a structured job post in seconds using AI-assisted generation, then publish directly to the job board.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-1.5 shrink-0">
+          <div className="flex flex-wrap gap-2 shrink-0">
             {presetExamples.map((ex, idx) => (
               <button
                 key={idx}
                 onClick={() => selectPreset(idx)}
-                className="bg-white hover:bg-[#EDF3F8] text-[#0A66C2] border border-[#0A66C2]/40 text-xs px-3 py-1.5 rounded-full font-medium transition-colors shadow-2xs cursor-pointer"
+                className="bg-white hover:bg-gray-50 text-blue-600 border border-gray-200 hover:border-blue-300 text-xs px-3 py-1.5 rounded-lg font-bold transition-all shadow-sm cursor-pointer hover:shadow-md"
               >
                 ⚡ {ex.title.split(' ')[0]} {ex.title.split(' ')[1]}
               </button>
@@ -131,19 +134,19 @@ We are actively recruiting an exceptional professional to architect scalable sys
       </div>
 
       {/* Main Studio Grid: Input Notes on Left, Live Preview on Right */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* LEFT COLUMN: Input Specifications (col-span-6) */}
-        <div className="md:col-span-6 space-y-4">
-          <div className="linkedin-card p-6 space-y-4">
-            <h3 className="text-base font-bold text-[#191919] flex items-center gap-2 border-b border-[#DBDBDB] pb-2.5">
-              <Briefcase className="w-5 h-5 text-[#0A66C2]" />
+        <div className="lg:col-span-6 space-y-4">
+          <div className="saas-card p-6 md:p-8 space-y-5">
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 border-b border-gray-200 pb-3 mb-2">
+              <Briefcase className="w-5 h-5 text-blue-600" />
               <span>1. Position Details & Raw Notes</span>
             </h3>
 
             <div>
-              <label className="block text-xs font-semibold text-[#666666] mb-1 flex items-center gap-1">
-                <FileText className="w-3.5 h-3.5 text-[#0A66C2]" />
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-blue-600" />
                 Job Title / Position
               </label>
               <input
@@ -154,10 +157,10 @@ We are actively recruiting an exceptional professional to architect scalable sys
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#666666] mb-1 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-[#057642]" />
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-emerald-600" />
                   Location
                 </label>
                 <input
@@ -168,8 +171,8 @@ We are actively recruiting an exceptional professional to architect scalable sys
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#666666] mb-1 flex items-center gap-1">
-                  <DollarSign className="w-3.5 h-3.5 text-[#0A66C2]" />
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+                  <DollarSign className="w-4 h-4 text-blue-600" />
                   Salary Range
                 </label>
                 <input
@@ -182,8 +185,8 @@ We are actively recruiting an exceptional professional to architect scalable sys
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#666666] mb-1 flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-[#E68523]" />
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-orange-500" />
                 Target Technical Skills (Comma Separated)
               </label>
               <input
@@ -196,12 +199,12 @@ We are actively recruiting an exceptional professional to architect scalable sys
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-[#666666] flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-[#057642]" />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
                   Rough Hiring Manager Notes
                 </label>
-                <span className="text-[10px] bg-[#EDF3F8] text-[#0A66C2] px-1.5 py-0.5 rounded font-bold">
+                <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border border-blue-100">
                   Gemini Input
                 </span>
               </div>
@@ -209,7 +212,7 @@ We are actively recruiting an exceptional professional to architect scalable sys
                 rows={5}
                 value={rawNotes}
                 onChange={(e) => setRawNotes(e.target.value)}
-                className="input-field font-mono !text-xs leading-relaxed resize-none"
+                className="input-field font-mono !text-sm leading-relaxed resize-none bg-gray-50"
                 placeholder="Type quick engineering requirements, salary notes, or team directives..."
               />
             </div>
@@ -218,25 +221,25 @@ We are actively recruiting an exceptional professional to architect scalable sys
               type="button"
               onClick={handleGenerate}
               disabled={generating}
-              className="w-full btn-primary py-2.5 text-sm font-bold shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full btn-primary py-3 text-base font-bold shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2"
             >
               {generating ? (
                 <>
-                  <RefreshCw className="w-4 h-4 text-white animate-spin" />
+                  <RefreshCw className="w-5 h-5 text-white animate-spin" />
                   <span>Gemini Formatting in Progress...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-5 h-5" />
                   <span>Generate AI Job Post</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-5 h-5" />
                 </>
               )}
             </button>
 
             {error && (
-              <div className="p-3 rounded bg-[#FFF0E0] border border-[#F2C08A] text-[#A65300] text-xs flex items-start gap-2">
-                <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
+              <div className="p-3 rounded-lg bg-orange-50 border border-orange-200 text-orange-700 text-sm flex items-start gap-2">
+                <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5" />
                 <div>{error}</div>
               </div>
             )}
@@ -244,50 +247,52 @@ We are actively recruiting an exceptional professional to architect scalable sys
         </div>
 
         {/* RIGHT COLUMN: AI Generated Output & Publishing (col-span-6) */}
-        <div className="md:col-span-6 flex flex-col">
-          <div className="linkedin-card p-6 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <div className="flex items-center justify-between border-b border-[#DBDBDB] pb-2.5 mb-3">
-                <h3 className="text-base font-bold text-[#191919] flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-[#057642]" />
+        <div className="lg:col-span-6 flex flex-col h-full min-h-[600px]">
+          <div className="saas-card p-6 md:p-8 flex-1 flex flex-col justify-between space-y-6 bg-gray-50/50">
+            <div className="flex-1 flex flex-col">
+              <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-4">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
                   <span>2. AI Recruiter Profile Preview</span>
                 </h3>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  formattedDescription ? 'bg-[#E7F3ED] text-[#057642]' : 'bg-[#F3F2EF] text-[#666666]'
+                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider border ${
+                  formattedDescription ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-100 text-gray-500 border-gray-200'
                 }`}>
-                  {formattedDescription ? 'READY TO PUBLISH' : 'WAITING FOR INPUT'}
+                  {formattedDescription ? 'Ready to Publish' : 'Waiting for Input'}
                 </span>
               </div>
 
-              <div className="min-h-[340px] max-h-[480px] overflow-y-auto pr-1">
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar bg-white rounded-xl border border-gray-200 p-4 shadow-inner min-h-[400px]">
                 {generating ? (
-                  <div className="py-24 flex flex-col items-center justify-center text-center space-y-3 animate-pulse">
-                    <div className="w-12 h-12 rounded-full bg-[#EDF3F8] text-[#0A66C2] flex items-center justify-center font-bold">
-                      <Sparkles className="w-6 h-6 animate-spin-slow" />
+                  <div className="h-full flex flex-col items-center justify-center text-center space-y-4 animate-pulse">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                      <Sparkles className="w-8 h-8 animate-spin-slow" />
                     </div>
-                    <div className="text-[#191919] font-bold text-sm">
+                    <div className="text-gray-900 font-bold text-base">
                       Executing Gemini Recruiter Persona...
                     </div>
-                    <p className="text-xs text-[#666666] max-w-xs">
+                    <p className="text-sm text-gray-500 max-w-sm">
                       Structuring markdown, formatting requirements, and optimizing for high candidate conversion.
                     </p>
                   </div>
                 ) : formattedDescription ? (
-                  <div className="space-y-3">
-                    <div className="p-3 rounded bg-[#EDF3F8] border border-[#B3D3EA] text-xs font-medium text-[#0A66C2] flex items-center justify-between">
-                      <span>✨ AI-assisted</span>
-                      <span>Neon DB Relational Sync Ready</span>
+                  <div className="space-y-4">
+                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-100 text-xs font-bold text-blue-700 flex items-center justify-between uppercase tracking-wider">
+                      <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4"/> AI-assisted</span>
+                      <span>Neon DB Sync Ready</span>
                     </div>
-                    <div className="whitespace-pre-wrap leading-relaxed text-sm text-[#191919] font-sans pr-2">
+                    <div className="whitespace-pre-wrap leading-relaxed text-sm text-gray-800 font-sans px-2">
                       {formattedDescription}
                     </div>
                   </div>
                 ) : (
-                  <div className="py-24 border-2 border-dashed border-[#DBDBDB] rounded-lg flex flex-col items-center justify-center text-center p-6 text-[#666666] space-y-2">
-                    <Briefcase className="w-10 h-10 text-[#757575]" />
-                    <p className="font-bold text-[#191919] text-sm">No Job Generated Yet</p>
-                    <p className="text-xs max-w-xs leading-relaxed">
-                      Fill out position notes on the left and click **Generate AI Job Post** to watch Gemini assemble your listing.
+                  <div className="h-full border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-center p-8 text-gray-500 space-y-3 bg-gray-50/50">
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 mb-2">
+                      <Briefcase className="w-8 h-8 text-gray-300" />
+                    </div>
+                    <p className="font-bold text-gray-900 text-base">No Job Generated Yet</p>
+                    <p className="text-sm max-w-sm leading-relaxed text-gray-500">
+                      Fill out position notes on the left and click <strong>Generate AI Job Post</strong> to watch Gemini assemble your listing.
                     </p>
                   </div>
                 )}
@@ -295,42 +300,42 @@ We are actively recruiting an exceptional professional to architect scalable sys
             </div>
 
             {/* Publishing Banner */}
-            <div className="pt-4 border-t border-[#DBDBDB]">
+            <div className="pt-5 border-t border-gray-200 mt-auto">
               {publishedSuccess ? (
-                <div className="p-3.5 rounded-lg bg-[#E7F3ED] border border-[#B2DFCB] text-[#057642] flex items-center justify-between shadow-xs">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 shrink-0" />
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-8 h-8 shrink-0 text-emerald-600" />
                     <div>
-                      <h4 className="font-bold text-sm text-[#191919]">Job Published Successfully!</h4>
-                      <p className="text-xs text-[#666666]">Persisted directly to Neon Postgres relational tables.</p>
+                      <h4 className="font-bold text-base text-gray-900">Job Published Successfully!</h4>
+                      <p className="text-xs text-emerald-700 mt-0.5">Persisted directly to Neon Postgres relational tables.</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setPublishedSuccess(false)}
-                    className="bg-white text-[#057642] border border-[#057642] hover:bg-[#E7F3ED] text-xs font-bold px-3 py-1 rounded-full cursor-pointer transition-colors"
+                    className="bg-white text-emerald-700 border border-emerald-300 hover:bg-emerald-50 text-sm font-bold px-4 py-2 rounded-lg cursor-pointer transition-colors shadow-sm w-full sm:w-auto"
                   >
                     Create Another
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     type="button"
                     onClick={handlePublish}
                     disabled={publishing || !formattedDescription}
-                    className={`flex-1 btn-accent py-2.5 text-sm flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`flex-1 btn-accent py-3 text-base font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                       !formattedDescription ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
                   >
                     {publishing ? (
                       <>
-                        <RefreshCw className="w-4 h-4 text-white animate-spin" />
+                        <RefreshCw className="w-5 h-5 text-white animate-spin" />
                         <span>Publishing to Database...</span>
                       </>
                     ) : (
                       <>
-                        <Send className="w-4 h-4" />
+                        <Send className="w-5 h-5" />
                         <span>Publish to Live Job Board</span>
                       </>
                     )}
@@ -340,10 +345,10 @@ We are actively recruiting an exceptional professional to architect scalable sys
                     <button
                       type="button"
                       onClick={() => onOpenAuth('EMPLOYER')}
-                      className="btn-secondary !text-xs !py-2 !px-4 flex items-center gap-1 cursor-pointer"
+                      className="btn-secondary py-3 px-6 flex items-center justify-center gap-2 cursor-pointer"
                       title="Requires Employer Split-Entity Profile"
                     >
-                      <Lock className="w-3.5 h-3.5 text-[#E68523]" />
+                      <Lock className="w-4 h-4 text-orange-500" />
                       <span>Employer Login</span>
                     </button>
                   ) : null}

@@ -59,31 +59,31 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-[2px]">
-      <div className="w-full max-w-md bg-white rounded-lg border border-[#DBDBDB] shadow-2xl p-6 overflow-hidden">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm transition-opacity">
+      <div className="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-2xl p-6 overflow-hidden">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#DBDBDB]">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded bg-[#0A66C2] text-white flex items-center justify-center font-bold text-sm">
+        <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-inner">
               SB
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#191919]">
+              <h3 className="text-lg font-bold text-gray-900">
                 {isRegistering ? 'Create Signal Board Profile' : 'Sign in to Signal Board'}
               </h3>
-              <p className="text-[11px] text-[#666666]">Decentralized JWT session authentication</p>
+              <p className="text-xs text-gray-500 font-medium">Decentralized JWT session authentication</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#666666] hover:text-[#191919] p-1 rounded hover:bg-[#F3F2EF]">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Demo Login Buttons */}
-        <div className="my-4 bg-[#EDF3F8] border border-[#B3D3EA] rounded p-3">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-[#0A66C2] mb-2 uppercase">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#057642]" />
+        <div className="my-5 bg-blue-50 border border-blue-100 rounded-xl p-3.5">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-blue-700 mb-2 uppercase tracking-wider">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>Instant Demo Sessions</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -91,36 +91,36 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
               type="button"
               onClick={() => handleDemoLogin('CANDIDATE')}
               disabled={loading}
-              className="btn-secondary !text-xs !py-1.5 flex items-center justify-center gap-1 !bg-white"
+              className="btn-secondary !text-xs !py-2 flex items-center justify-center gap-1.5"
             >
-              <UserIcon className="w-3.5 h-3.5 text-[#057642]" />
+              <UserIcon className="w-3.5 h-3.5 text-emerald-600" />
               <span>Demo Candidate</span>
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('EMPLOYER')}
               disabled={loading}
-              className="btn-secondary !text-xs !py-1.5 flex items-center justify-center gap-1 !bg-white"
+              className="btn-secondary !text-xs !py-2 flex items-center justify-center gap-1.5"
             >
-              <Building className="w-3.5 h-3.5 text-[#0A66C2]" />
+              <Building className="w-3.5 h-3.5 text-blue-600" />
               <span>Demo Employer</span>
             </button>
           </div>
         </div>
 
         {/* Role Selector */}
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#F3F2EF] rounded mb-4 border border-[#DBDBDB]">
+        <div className="grid grid-cols-2 gap-1 p-1 bg-gray-100 rounded-lg mb-5 border border-gray-200">
           <button
             type="button"
             onClick={() => {
               setRole('CANDIDATE');
               setEmail('candidate@signalboard.ai');
             }}
-            className={`py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
-              role === 'CANDIDATE' ? 'bg-white text-[#0A66C2] shadow-xs' : 'text-[#666666] hover:text-[#191919]'
+            className={`py-2 rounded-md text-sm font-bold transition-all cursor-pointer ${
+              role === 'CANDIDATE' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Candidate (Job Seeker)
+            Candidate
           </button>
           <button
             type="button"
@@ -128,23 +128,23 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
               setRole('EMPLOYER');
               setEmail('employer@signalboard.ai');
             }}
-            className={`py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
-              role === 'EMPLOYER' ? 'bg-white text-[#0A66C2] shadow-xs' : 'text-[#666666] hover:text-[#191919]'
+            className={`py-2 rounded-md text-sm font-bold transition-all cursor-pointer ${
+              role === 'EMPLOYER' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Employer (Hiring Studio)
+            Employer
           </button>
         </div>
 
         {error && (
-          <div className="p-2.5 mb-3 rounded bg-[#FFF0E0] border border-[#F2C08A] text-[#A65300] text-xs">
-            ⚠️ {error}
+          <div className="p-3 mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium flex items-center gap-2">
+            <span className="text-lg">⚠️</span> {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-[#666666] uppercase mb-1">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
               Email Address
             </label>
             <input
@@ -152,13 +152,13 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input-field !text-sm"
+              className="input-field"
               placeholder="user@domain.com"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#666666] uppercase mb-1">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
               Password
             </label>
             <input
@@ -166,14 +166,14 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="input-field !text-sm"
+              className="input-field"
               placeholder="••••••••"
             />
           </div>
 
           {isRegistering && role === 'EMPLOYER' && (
             <div>
-              <label className="block text-xs font-bold text-[#666666] uppercase mb-1">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
                 Company Name
               </label>
               <input
@@ -181,31 +181,31 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
                 required
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                className="input-field !text-sm"
+                className="input-field"
               />
             </div>
           )}
 
           {isRegistering && role === 'CANDIDATE' && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#666666] uppercase mb-1">First Name</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">First Name</label>
                 <input
                   type="text"
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="input-field !text-sm"
+                  className="input-field"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#666666] uppercase mb-1">Last Name</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Last Name</label>
                 <input
                   type="text"
                   required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="input-field !text-sm"
+                  className="input-field"
                 />
               </div>
             </div>
@@ -214,18 +214,18 @@ export const AuthModal = ({ isOpen, onClose, defaultRole = 'CANDIDATE', onAuthSu
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary py-2.5 font-bold text-sm mt-1"
+            className="w-full btn-primary py-3 font-bold text-sm mt-2"
           >
             {loading ? 'Authenticating...' : isRegistering ? `Register ${role} Profile` : 'Sign In'}
           </button>
         </form>
 
-        <div className="mt-4 pt-3 border-t border-[#DBDBDB] text-center text-xs text-[#666666]">
+        <div className="mt-5 pt-4 border-t border-gray-200 text-center text-sm text-gray-500 font-medium">
           {isRegistering ? 'Already have an account?' : 'Need a split-entity account?'}
           <button
             type="button"
             onClick={() => setIsRegistering(!isRegistering)}
-            className="ml-1.5 font-bold text-[#0A66C2] hover:underline"
+            className="ml-1.5 font-bold text-blue-600 hover:text-blue-700 hover:underline"
           >
             {isRegistering ? 'Sign In' : 'Create Account'}
           </button>
