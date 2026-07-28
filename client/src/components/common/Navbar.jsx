@@ -74,17 +74,19 @@ export const Navbar = ({ user, activeTab, setActiveTab, onOpenAuth, onLogout, on
             <span className="hidden sm:inline text-[11px] font-medium mt-0.5">Jobs & AI Feed</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab('GENERATE')}
-            className={`flex flex-col items-center justify-center px-2 h-full border-b-2 transition-all cursor-pointer ${
-              activeTab === 'GENERATE'
-                ? 'border-[#0A66C2] text-[#0A66C2]'
-                : 'border-transparent text-[#666666] hover:text-[#191919]'
-            }`}
-          >
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span className="hidden sm:inline text-[11px] font-medium mt-0.5">Employer Studio</span>
-          </button>
+          {(!user || user.role === 'EMPLOYER') && (
+            <button
+              onClick={() => setActiveTab('GENERATE')}
+              className={`flex flex-col items-center justify-center px-2 h-full border-b-2 transition-all cursor-pointer ${
+                activeTab === 'GENERATE'
+                  ? 'border-[#0A66C2] text-[#0A66C2]'
+                  : 'border-transparent text-[#666666] hover:text-[#191919]'
+              }`}
+            >
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+              <span className="hidden sm:inline text-[11px] font-medium mt-0.5">Employer Studio</span>
+            </button>
+          )}
         </nav>
 
         {/* Right Side: Identity & Profile Portal */}

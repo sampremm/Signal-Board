@@ -61,6 +61,7 @@ export default function App() {
       <main className="flex-1">
         {activeTab === 'LANDING' && (
           <LandingPage
+            user={user}
             onExploreSearch={() => setActiveTab('SEARCH')}
             onExploreAiStudio={() => setActiveTab('GENERATE')}
             onOpenAuth={handleOpenAuth}

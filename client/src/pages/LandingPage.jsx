@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
-export const LandingPage = ({ onExploreSearch, onExploreAiStudio, onOpenAuth }) => {
+export const LandingPage = ({ user, onExploreSearch, onExploreAiStudio, onOpenAuth }) => {
   return (
     <div className="max-w-[1128px] mx-auto px-4 py-8 space-y-8">
       
@@ -38,13 +38,15 @@ export const LandingPage = ({ onExploreSearch, onExploreAiStudio, onOpenAuth }) 
               <ArrowRight className="w-4 h-4" />
             </button>
 
-            <button
-              onClick={onExploreAiStudio}
-              className="w-full sm:w-auto btn-secondary py-3 px-8 flex items-center justify-center gap-2"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Employer AI Job Studio</span>
-            </button>
+            {(!user || user.role === 'EMPLOYER') && (
+              <button
+                onClick={onExploreAiStudio}
+                className="w-full sm:w-auto btn-secondary py-3 px-8 flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Employer AI Job Studio</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
